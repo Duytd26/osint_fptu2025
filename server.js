@@ -12,8 +12,7 @@ const CORRECT_ANSWER = "FPTFLAG2025"; // <-- THAY ĐỔI ĐÁP ÁN ĐÚNG CỦA 
 
 // Cấu hình tài khoản Admin (chỉ để demo, trong thực tế nên lưu trong DB hoặc biến môi trường an toàn hơn)
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || bcrypt.hashSync('26062006', 10); // <-- THAY ĐỔI MẬT KHẨU ADMIN CỦA BẠN TẠI ĐÂY!
-                                                                                                      // Đảm bảo mật khẩu mạnh và không để lộ!
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
 
 // Khởi tạo cơ sở dữ liệu SQLite
 const db = new sqlite3.Database('./leaderboard.db', (err) => {
