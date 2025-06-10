@@ -164,15 +164,29 @@ app.post('/admin/logout', (req, res) => {
 });
 
 // API Endpoint để lấy bảng xếp hạng (CHỈ ADMIN MỚI XEM ĐƯỢC)
-app.get('/leaderboard', isAuthenticated, (req, res) => { // Áp dụng middleware isAuthenticated
+app.get('/leaderboard', isAuthenticated, (req, res) => {
     db.all('SELECT name, finish_time FROM players ORDER BY finish_time ASC', [], (err, rows) => {
         if (err) {
             console.error('Lỗi khi lấy bảng xếp hạng:', err.message);
             return res.status(500).json({ success: false, message: 'Lỗi khi tải bảng xếp hạng.' });
         }
-        res.json(rows);
+
+        // Chuyển từ UTC -> giờ Việt Nam
+        const convertedRows = rows.map(row => {
+            const localTime = new Date(row.finish_time + 'Z').toLocaleString('vi-VN', {
+                timeZone: 'Asia/Ho_Chi_Minh',
+                hour12: false
+            });
+            return {
+                name: row.name,
+                finish_time: localTime
+            };
+        });
+
+        res.json(convertedRows);
     });
 });
+
 
 // API Endpoint để reset bảng xếp hạng (CHỈ ADMIN MỚI CÓ QUYỀN)
 app.post('/admin/reset-leaderboard', isAuthenticated, (req, res) => {
