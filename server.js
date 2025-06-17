@@ -173,11 +173,14 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
 
         // Chuyển từ UTC -> giờ Việt Nam
         const convertedRows = rows.map(row => {
-            const localTime = new Date(row.finish_time.replace(' ', 'T')).toLocaleString('vi-VN', {
+            let isoString = row.finish_time.replace(' ', 'T');
+            if (!isoString.endsWith('Z')) {
+                isoString += 'Z';
+            }
+            const localTime = new Date(isoString).toLocaleString('vi-VN', {
                 timeZone: 'Asia/Ho_Chi_Minh',
                 hour12: false
             });
-
             return {
                 name: row.name,
                 finish_time: localTime
