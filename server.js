@@ -173,16 +173,14 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
 
         // Chuyển từ UTC -> giờ Việt Nam
         const convertedRows = rows.map(row => {
-            let isoString = row.finish_time.replace(' ', 'T');
-            if (!isoString.endsWith('Z')) {
-                isoString += 'Z';
-            }
-            const localTime = new Date(isoString).toLocaleString('vi-VN', {
+            const [datePart, timePart] = row.finish_time.split(' ');
+            const [year, month, day] = datePart.split('-').map(Number);
+            const [hour, minute, second] = timePart.split(':').map(Number);
+            const dateUTC = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+            const localTime = dateUTC.toLocaleString('vi-VN', {
                 timeZone: 'Asia/Ho_Chi_Minh',
                 hour12: false
             });
-
-
             return {
                 name: row.name,
                 finish_time: localTime
@@ -192,6 +190,7 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
         res.json(convertedRows);
     });
 });
+
 
 
 // API Endpoint để reset bảng xếp hạng (CHỈ ADMIN MỚI CÓ QUYỀN)
