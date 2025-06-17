@@ -173,14 +173,12 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
 
         // Chuyển từ UTC -> giờ Việt Nam
         const convertedRows = rows.map(row => {
-            const [datePart, timePart] = row.finish_time.split(' ');
-            const [year, month, day] = datePart.split('-').map(Number);
-            const [hour, minute, second] = timePart.split(':').map(Number);
-            const dateUTC = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+            const dateUTC = new Date(row.finish_time);  // Parse trực tiếp từ chuỗi ISO hoặc từ SQLite trả về
             const localTime = dateUTC.toLocaleString('vi-VN', {
                 timeZone: 'Asia/Ho_Chi_Minh',
                 hour12: false
             });
+
             return {
                 name: row.name,
                 finish_time: localTime
