@@ -173,31 +173,15 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
 
         // Chuyển từ UTC -> giờ Việt Nam
         const convertedRows = rows.map(row => {
-            const convertedRows = rows.map(row => {
-                // Cắt thành các thành phần
-                const [datePart, timePart] = row.finish_time.split(' ');
-                const [year, month, day] = datePart.split('-');
-                const [hour, minute, second] = timePart.split(':');
-            
-                const dateObj = new Date(Date.UTC(
-                    parseInt(year),
-                    parseInt(month) - 1, // tháng tính từ 0
-                    parseInt(day),
-                    parseInt(hour),
-                    parseInt(minute),
-                    parseInt(second)
-                ));
-            
-                const localTime = dateObj.toLocaleString('vi-VN', {
-                    timeZone: 'Asia/Ho_Chi_Minh',
-                    hour12: false
-                });
-            
-                return {
-                    name: row.name,
-                    finish_time: localTime
-                };
+            let isoString = row.finish_time.replace(' ', 'T');
+            if (!isoString.endsWith('Z')) {
+                isoString += 'Z';
+            }
+            const localTime = new Date(isoString).toLocaleString('vi-VN', {
+                timeZone: 'Asia/Ho_Chi_Minh',
+                hour12: false
             });
+
 
             return {
                 name: row.name,
