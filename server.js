@@ -172,19 +172,16 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
         }
 
         const convertedRows = rows.map(row => {
-            let dateUTC;
-            try {
-                dateUTC = new Date(row.finish_time.replace(' ', 'T') + 'Z');
-            } catch (e) {
-                console.error('Lỗi khi parse thời gian:', e.message);
+            let isoString = row.finish_time.replace(' ', 'T') + 'Z';
+            let dateUTC = new Date(isoString);
+            if (isNaN(dateUTC.getTime())) {
+                console.error(`Invalid Date parse từ chuỗi: ${row.finish_time}`);
                 return { name: row.name, finish_time: "Invalid Date" };
             }
-
             const localTime = dateUTC.toLocaleString('vi-VN', {
                 timeZone: 'Asia/Ho_Chi_Minh',
                 hour12: false
             });
-
             return {
                 name: row.name,
                 finish_time: localTime
@@ -194,6 +191,7 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
         res.json(convertedRows);
     });
 });
+
 
 // API Endpoint để reset bảng xếp hạng (CHỈ ADMIN MỚI CÓ QUYỀN)
 app.post('/admin/reset-leaderboard', isAuthenticated, (req, res) => {
