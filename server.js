@@ -171,9 +171,15 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
             return res.status(500).json({ success: false, message: 'Lỗi khi tải bảng xếp hạng.' });
         }
 
-        // Chuyển từ UTC -> giờ Việt Nam
         const convertedRows = rows.map(row => {
-            const dateUTC = new Date(row.finish_time);  // Parse trực tiếp từ chuỗi ISO hoặc từ SQLite trả về
+            let dateUTC;
+            try {
+                dateUTC = new Date(row.finish_time.replace(' ', 'T') + 'Z');
+            } catch (e) {
+                console.error('Lỗi khi parse thời gian:', e.message);
+                return { name: row.name, finish_time: "Invalid Date" };
+            }
+
             const localTime = dateUTC.toLocaleString('vi-VN', {
                 timeZone: 'Asia/Ho_Chi_Minh',
                 hour12: false
@@ -188,8 +194,6 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
         res.json(convertedRows);
     });
 });
-
-
 
 // API Endpoint để reset bảng xếp hạng (CHỈ ADMIN MỚI CÓ QUYỀN)
 app.post('/admin/reset-leaderboard', isAuthenticated, (req, res) => {
