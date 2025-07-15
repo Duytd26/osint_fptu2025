@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000; // Sử dụng biến môi trường PORT cho Render
 
 // Đáp án đúng của trò chơi (CHỈ NÊN ĐẶT Ở ĐÂY, KHÔNG ĐỂ Ở CLIENT)
-const CORRECT_ANSWER = "FPTFLAG2025"; // <-- THAY ĐỔI ĐÁP ÁN ĐÚNG CỦA BẠN TẠI ĐÂY!
+const CORRECT_ANSWER = "Vortera"; // <-- THAY ĐỔI ĐÁP ÁN ĐÚNG CỦA BẠN TẠI ĐÂY!
 
 // Cấu hình tài khoản Admin (chỉ để demo, trong thực tế nên lưu trong DB hoặc biến môi trường an toàn hơn)
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
