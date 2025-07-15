@@ -171,14 +171,42 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
             return res.status(500).json({ success: false, message: 'Lỗi khi tải bảng xếp hạng.' });
         }
 
-        // Bỏ thời gian - chỉ hiển thị tên
-        const convertedRows = rows.map(row => ({
-            name: row.name
-        }));
+        const convertedRows = rows.map(row => {
+            const dateTime = row.finish_time;
+
+            if (!dateTime || typeof dateTime !== 'string' || !dateTime.includes(' ')) {
+                return { name: row.name, finish_time: "" };
+            }
+
+            const parts = dateTime.split(/[- :]/); // tách "YYYY-MM-DD HH:MM:SS" thành mảng
+
+            if (parts.length < 6) {
+                return { name: row.name, finish_time: "" };
+            }
+
+            const [year, month, day, hour, minute, second] = parts.map(Number);
+
+            const dateUTC = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+
+            if (isNaN(dateUTC.getTime())) {
+                return { name: row.name, finish_time: "" };
+            }
+
+            const localTime = dateUTC.toLocaleString('vi-VN', {
+                timeZone: 'Asia/Ho_Chi_Minh',
+                hour12: false
+            });
+
+            return {
+                name: row.name,
+                finish_time: localTime
+            };
+        });
 
         res.json(convertedRows);
     });
 });
+
 
 
 // API Endpoint để reset bảng xếp hạng (CHỈ ADMIN MỚI CÓ QUYỀN)
