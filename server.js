@@ -171,22 +171,10 @@ app.get('/leaderboard', isAuthenticated, (req, res) => {
             return res.status(500).json({ success: false, message: 'Lỗi khi tải bảng xếp hạng.' });
         }
 
-        const convertedRows = rows.map(row => {
-            let isoString = row.finish_time.replace(' ', 'T') + 'Z';
-            let dateUTC = new Date(isoString);
-            if (isNaN(dateUTC.getTime())) {
-                console.error(`Invalid Date parse từ chuỗi: ${row.finish_time}`);
-                return { name: row.name, finish_time: "Invalid Date" };
-            }
-            const localTime = dateUTC.toLocaleString('vi-VN', {
-                timeZone: 'Asia/Ho_Chi_Minh',
-                hour12: false
-            });
-            return {
-                name: row.name,
-                finish_time: localTime
-            };
-        });
+        // Bỏ thời gian - chỉ hiển thị tên
+        const convertedRows = rows.map(row => ({
+            name: row.name
+        }));
 
         res.json(convertedRows);
     });
