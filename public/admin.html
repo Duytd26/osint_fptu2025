@@ -244,7 +244,17 @@
 
                 players.forEach((player, index) => {
                     const listItem = document.createElement('li');
-                    const finishTime = new Date(player.finish_time).toLocaleString('vi-VN');
+                    const finishTime = new Intl.DateTimeFormat('vi-VN', {
+                        timeZone: 'Asia/Ho_Chi_Minh',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    }).format(new Date(player.finish_time));
+
                     listItem.innerHTML = `
                         <span>${index + 1}. ${player.name}</span>
                         <span>${finishTime}</span>
